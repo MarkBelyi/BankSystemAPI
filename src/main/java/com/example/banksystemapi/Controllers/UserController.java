@@ -1,7 +1,9 @@
-package com.example.banksystemapi.controllers;
+package com.example.banksystemapi.Controllers;
 
 import com.example.banksystemapi.DTO.UserRegistrationDto;
 import com.example.banksystemapi.Database.User;
+import com.example.banksystemapi.Requests.LoginRequest;
+import com.example.banksystemapi.Responses.LoginResponse;
 import com.example.banksystemapi.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +24,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String login, @RequestParam String password){
-        boolean isValid = userService.validateUser(login, password);
-        if(isValid){
-            return "Login successful";
-        }else{
-            return "Invalid login or password";
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+        boolean isValid = userService.validateUser(loginRequest.getLogin(), loginRequest.getPassword());
+        if (isValid) {
+            return new LoginResponse("SUCCESS");
+        } else {
+            return new LoginResponse("ERROR");
         }
     }
 

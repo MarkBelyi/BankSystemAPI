@@ -17,11 +17,11 @@ public class UserService {
         return userRepository.findUserByLoginAndPassword(login, password).isPresent();
     }
 
-    public User registerUser(String login, String password) {
+    public void registerUser(String login, String password) {
         User newUser = new User();
         newUser.setLogin(login);
         newUser.setPassword(password);
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
     }
 
     // Метод для получения всех пользователей
