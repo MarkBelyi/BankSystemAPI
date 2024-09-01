@@ -1,6 +1,6 @@
-package com.example.banksystemapi.DTO;
+package com.example.banksystemapi.Requests;
 
-public class UserRegistrationDto {
+public class RegistrationRequest {
     private String login;
     private String password;
     private String phone;

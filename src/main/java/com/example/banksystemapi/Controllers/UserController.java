@@ -1,9 +1,10 @@
 package com.example.banksystemapi.Controllers;
 
-import com.example.banksystemapi.DTO.UserRegistrationDto;
+import com.example.banksystemapi.Requests.RegistrationRequest;
 import com.example.banksystemapi.Database.User;
 import com.example.banksystemapi.Requests.LoginRequest;
 import com.example.banksystemapi.Responses.LoginResponse;
+import com.example.banksystemapi.Responses.RegistrationResponse;
 import com.example.banksystemapi.Services.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,12 +35,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody UserRegistrationDto userDto) {
-        if (userService.validateUser(userDto.getLogin(), userDto.getPassword())) {
-            return "User already exists";
-        }
-        userService.registerUser(userDto.getLogin(), userDto.getPassword(), userDto.getPhone());
-        return "User registered successfully";
+    public RegistrationResponse register(@RequestBody RegistrationRequest regRequest) {
+        return userService.registerUser(regRequest.getLogin(), regRequest.getPassword(), regRequest.getPhone());
     }
 
 

@@ -2,6 +2,7 @@ package com.example.banksystemapi.Services;
 
 import com.example.banksystemapi.Database.User;
 import com.example.banksystemapi.Repository.UserRepository;
+import com.example.banksystemapi.Responses.RegistrationResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -20,19 +21,20 @@ public class UserService {
         return userRepository.findUserByLoginAndPassword(login, password).isPresent();
     }
 
-    public void registerUser(String login, String password, String phone) {
+    public RegistrationResponse registerUser(String login, String password, String phone) {
         try {
             User newUser = new User();
             newUser.setLogin(login);
             newUser.setPassword(password);
             newUser.setPhone(phone);
             userRepository.save(newUser);
+            return new RegistrationResponse("SUCCESS", "User registered successfully");
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Login already exists");
+            return new RegistrationResponse("ERROR", "Login already exists");
+        } catch (Exception e) {
+            return new RegistrationResponse("ERROR", "Registration failed");
         }
     }
-
-
 
     public boolean checkIfUserExists(String login) {
         return userRepository.findByLogin(login).isPresent();
