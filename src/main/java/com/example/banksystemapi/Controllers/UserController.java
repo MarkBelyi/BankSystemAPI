@@ -1,8 +1,10 @@
 package com.example.banksystemapi.Controllers;
 
+import com.example.banksystemapi.Requests.ForgotPasswordRequest;
 import com.example.banksystemapi.Requests.RegistrationRequest;
 import com.example.banksystemapi.Database.User;
 import com.example.banksystemapi.Requests.LoginRequest;
+import com.example.banksystemapi.Responses.ForgotPasswordResponse;
 import com.example.banksystemapi.Responses.LoginResponse;
 import com.example.banksystemapi.Responses.RegistrationResponse;
 import com.example.banksystemapi.Services.UserService;
@@ -31,6 +33,26 @@ public class UserController {
             } else {
                 return new LoginResponse("ERROR", "User does not exist");
             }
+        }
+    }
+
+    @PostMapping("/forgot_pass")
+    public ForgotPasswordResponse forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        boolean isSent = userService.sendResetCode(forgotPasswordRequest.getPhone());
+        if (isSent) {
+            return new ForgotPasswordResponse("SUCCESS", "Reset code sent successfully");
+        } else {
+            return new ForgotPasswordResponse("ERROR", "Phone number not found");
+        }
+    }
+
+    @PostMapping("/verify_code")
+    public ForgotPasswordResponse verifyCode(@RequestBody ForgotPasswordRequest forgotPasswordRequest, @RequestParam String code) {
+        boolean isValid = userService.verifyResetCode(forgotPasswordRequest.getPhone(), code);
+        if (isValid) {
+            return new ForgotPasswordResponse("SUCCESS", "Code verified successfully");
+        } else {
+            return new ForgotPasswordResponse("ERROR", "Invalid code");
         }
     }
 
