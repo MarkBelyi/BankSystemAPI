@@ -3,6 +3,7 @@ package com.example.banksystemapi.DTO;
 public class UserRegistrationDto {
     private String login;
     private String password;
+    private String phone;
 
     public String getLogin() {
         return login;
@@ -18,6 +19,14 @@ public class UserRegistrationDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
 

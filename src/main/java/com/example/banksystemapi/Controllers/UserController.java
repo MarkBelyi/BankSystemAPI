@@ -5,7 +5,6 @@ import com.example.banksystemapi.Database.User;
 import com.example.banksystemapi.Requests.LoginRequest;
 import com.example.banksystemapi.Responses.LoginResponse;
 import com.example.banksystemapi.Services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,22 +13,23 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @GetMapping("/info")
-    public String info(){
-        return "This is user";
+    private final UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        boolean isValid = userService.validateUser(loginRequest.getLogin(), loginRequest.getPassword());
-        if (isValid) {
-            return new LoginResponse("SUCCESS");
+        boolean isValidUser = userService.validateUser(loginRequest.getLogin(), loginRequest.getPassword());
+        if (isValidUser) {
+            return new LoginResponse("SUCCESS", "Login successful");
         } else {
-            return new LoginResponse("ERROR");
+            boolean userExists = userService.checkIfUserExists(loginRequest.getLogin());
+            if (userExists) {
+                return new LoginResponse("ERROR", "Incorrect password");
+            } else {
+                return new LoginResponse("ERROR", "User does not exist");
+            }
         }
     }
 
@@ -38,16 +38,21 @@ public class UserController {
         if (userService.validateUser(userDto.getLogin(), userDto.getPassword())) {
             return "User already exists";
         }
-        userService.registerUser(userDto.getLogin(), userDto.getPassword());
+        userService.registerUser(userDto.getLogin(), userDto.getPassword(), userDto.getPhone());
         return "User registered successfully";
     }
+
 
     @GetMapping("/all-users")
     public String getAllUsers() {
         List<User> users = userService.getAllUsers();
-        return users.stream()
-                .map(user -> "ID: " + user.getId() + ", Login: " + user.getLogin() + ", Password: " + user.getPassword())
-                .collect(Collectors.joining("\n"));
+        if(users.isEmpty()){
+            return "In this System you don't have users!";
+        }else{
+            return users.stream()
+                    .map(user -> "ID: " + user.getId() + ", Login: " + user.getLogin() + ", Password: " + user.getPassword() + ", Phone: " + user.getPhone())
+                    .collect(Collectors.joining("\n"));
+        }
     }
 
 }
